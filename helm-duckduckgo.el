@@ -72,12 +72,27 @@
     ("YouTube"                 . "youtube")
     ))
 
+(defun helm-duckduckgo-read-queries ()
+  (let* ((end-of-input nil)
+         (map (let ((map (make-sparse-keymap)))
+                (set-keymap-parent map minibuffer-local-map)
+                (define-key map (kbd "<return>")
+                  (lambda ()
+                    (interactive)
+                    (setq end-of-input t)
+                    (call-interactively #'exit-minibuffer)))
+                (define-key map (kbd "C-<return>") #'exit-minibuffer)
+                map)))
+    (cl-loop until end-of-input
+             collect (read-from-minibuffer "Search query: " nil map))))
+
 (defun helm-duckduckgo-do-search (_)
-  (cl-loop with query = (read-string "Search query: ")
+  (cl-loop with queries = (helm-duckduckgo-read-queries)
            for bang in (helm-marked-candidates)
-           for url = (concat "http://duckduckgo.com/?q="
-                             (url-hexify-string (format "!%s %s" bang query)))
-           do (browse-url url)))
+           for urls = (mapcar
+                       (lambda (query) (concat "http://duckduckgo.com/?q=" (url-hexify-string (format "!%s %s" bang query))))
+                       queries)
+           do (mapc #'browse-url urls)))
 
 ;;;###autoload
 (defun helm-duckduckgo ()
