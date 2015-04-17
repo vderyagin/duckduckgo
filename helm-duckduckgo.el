@@ -27,7 +27,7 @@
 
 ;;; Code:
 
-(require 'helm-config)
+(require 'helm)
 
 (defconst helm-duckduckgo-bangs
   '(
