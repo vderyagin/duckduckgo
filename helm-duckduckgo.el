@@ -72,6 +72,8 @@
     ("YouTube (video hosting)"                      . "youtube")
     ))
 
+(defvar helm-duckduckgo-queries nil)
+
 (defun helm-duckduckgo-read-queries ()
   (let* ((end-of-input nil)
          (map (let ((map (make-sparse-keymap)))
@@ -87,22 +89,21 @@
              collect (read-from-minibuffer "Search query: " nil map))))
 
 (defun helm-duckduckgo-do-search (_)
-  (cl-loop with queries = (helm-duckduckgo-read-queries)
-           for bang in (helm-marked-candidates)
+  (cl-loop for bang in (helm-marked-candidates)
            for urls = (mapcar
                        (lambda (query) (concat "http://duckduckgo.com/?q=" (url-hexify-string (format "!%s %s" bang query))))
-                       queries)
+                       helm-duckduckgo-queries)
            do (mapc #'browse-url urls)))
 
 ;;;###autoload
 (defun helm-duckduckgo ()
   (interactive)
-  (helm :prompt "Search with: "
-        :sources '((name . "Search Options")
-                   (candidates . helm-duckduckgo-bangs)
-                   (action . (("Run Search" . helm-duckduckgo-do-search))))
-        :buffer "*helm duckduckgo*"))
-
+  (let ((helm-duckduckgo-queries (helm-duckduckgo-read-queries)))
+    (helm :prompt "Search with: "
+          :sources '((name . "Search Options")
+                     (candidates . helm-duckduckgo-bangs)
+                     (action . (("Run Search" . helm-duckduckgo-do-search))))
+          :buffer "*helm duckduckgo*")))
 
 (provide 'helm-duckduckgo)
 
