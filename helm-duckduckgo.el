@@ -76,7 +76,9 @@
 
 (defun helm-duckduckgo-read-queries ()
   (cl-loop with end-of-input = nil
-           with initial-content = (cons (buffer-substring-no-properties (region-beginning) (region-end)) 1)
+           with default-value = (and (region-active-p)
+                                     (buffer-substring-no-properties
+                                      (region-beginning) (region-end)))
            with map = (let ((map (make-sparse-keymap)))
                         (set-keymap-parent map minibuffer-local-map)
                         (define-key map (kbd "<return>")
@@ -87,11 +89,16 @@
                         (define-key map (kbd "C-<return>")
                           (lambda ()
                             (interactive)
-                            (setq initial-content nil)
+                            (setq default-value nil)
                             (call-interactively #'exit-minibuffer)))
                         map)
+           for prompt = (format "Search query%s: "
+                                (if default-value
+                                    (format " (default \"%s\")" default-value)
+                                  ""))
            until end-of-input
-           collect (read-from-minibuffer "Search query: " initial-content map)))
+           collect (let ((minibuffer-local-map map))
+                     (read-string prompt nil nil default-value))))
 
 (defun helm-duckduckgo-do-search (_)
   (cl-loop for bang in (helm-marked-candidates)
