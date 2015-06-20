@@ -37,6 +37,7 @@
     ("C2 Wiki"                                      . "c2")
     ("DuckDuckGo search engine"                     . "duckduckgo")
     ("EmacsWiki"                                    . "emacswiki")
+    ("Encyclopedia Metallum (The Metal Archives)"   . "metal")
     ("Free Dictionary"                              . "freedictionary")
     ("Gentoo Packages"                              . "ebuilds")
     ("Gentoo Portage Overlays"                      . "gpo")
