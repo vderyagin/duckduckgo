@@ -76,7 +76,8 @@
 (defvar helm-duckduckgo-queries nil)
 
 (defun helm-duckduckgo-read-queries ()
-  (cl-loop with end-of-input = nil
+  (cl-loop with queries
+           with end-of-input = nil
            with default-value = (and (region-active-p)
                                      (buffer-substring-no-properties
                                       (region-beginning) (region-end)))
@@ -99,7 +100,9 @@
                                   ""))
            until end-of-input
            collect (let ((minibuffer-local-map map))
-                     (read-string prompt nil nil default-value))))
+                     (read-string prompt nil nil default-value))
+           into queries
+           finally return (delete "" queries)))
 
 (defun helm-duckduckgo-do-search (_)
   (cl-loop for bang in (helm-marked-candidates)
