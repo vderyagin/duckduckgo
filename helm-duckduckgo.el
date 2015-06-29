@@ -119,6 +119,12 @@
             (helm-duckduckgo-urls (helm-marked-candidates)
                                   helm-duckduckgo-queries)))
 
+(defun helm-duckduckgo-copy-to-kill-ring (_)
+  (kill-new
+   (string-join (helm-duckduckgo-urls (helm-marked-candidates)
+                                      helm-duckduckgo-queries)
+                "\n")))
+
 ;;;###autoload
 (defun helm-duckduckgo ()
   (interactive)
@@ -126,7 +132,8 @@
     (helm :prompt "Search with: "
           :sources '((name . "Search Options")
                      (candidates . helm-duckduckgo-bangs)
-                     (action . (("Run Search" . helm-duckduckgo-do-search))))
+                     (action . (("Run Search" . helm-duckduckgo-do-search)
+                                ("Copy to Kill-ring" . helm-duckduckgo-copy-to-kill-ring))))
           :buffer "*helm duckduckgo*")))
 
 (provide 'helm-duckduckgo)
