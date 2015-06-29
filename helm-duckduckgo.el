@@ -6,7 +6,7 @@
 ;; Maintainer: Victor Deryagin <vderyagin@gmail.com>
 ;; Created: 25 Feb 2015
 ;; Version: 0.1
-;; Package-Requires: ((helm))
+;; Package-Requires: ((helm) (dash-functional))
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -28,6 +28,7 @@
 ;;; Code:
 
 (require 'helm)
+(require 'seq)
 
 (defconst helm-duckduckgo-bangs
   '(
@@ -104,12 +105,19 @@
            into queries
            finally return (delete "" queries)))
 
+(defun helm-duckduckgo-search-url (bang query)
+  (concat "http://duckduckgo.com/?q=" (url-hexify-string (format "!%s %s" bang query))))
+
+(defun helm-duckduckgo-urls (bangs queries)
+  (seq-mapcat (lambda (bang)
+                (seq-map (-partial #'helm-duckduckgo-search-url bang)
+                         queries))
+              bangs))
+
 (defun helm-duckduckgo-do-search (_)
-  (cl-loop for bang in (helm-marked-candidates)
-           for urls = (mapcar
-                       (lambda (query) (concat "http://duckduckgo.com/?q=" (url-hexify-string (format "!%s %s" bang query))))
-                       helm-duckduckgo-queries)
-           do (mapc #'browse-url urls)))
+  (seq-each #'browse-url
+            (helm-duckduckgo-urls (helm-marked-candidates)
+                                  helm-duckduckgo-queries)))
 
 ;;;###autoload
 (defun helm-duckduckgo ()
