@@ -39,7 +39,7 @@
     ("DuckDuckGo search engine"                     . "duckduckgo")
     ("EmacsWiki"                                    . "emacswiki")
     ("Encyclopedia Metallum (The Metal Archives)"   . "metal")
-    ("Free Dictionary"                              . "freedictionary")
+    ("Free Dictionary"                              . "thefreedictionary")
     ("Gentoo Packages"                              . "ebuilds")
     ("Gentoo Portage Overlays"                      . "gpo")
     ("Gentoo Wiki"                                  . "gentoo")
