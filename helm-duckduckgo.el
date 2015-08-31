@@ -33,6 +33,8 @@
 
 (defconst helm-duckduckgo-bangs
   '(
+    ("Google search engine"                         . "google")
+
     ("Aliexpress store"                             . "aliexpress")
     ("Amazon.com store"                             . "amazon")
     ("BitBucket.org mercurial/git code hosting"     . "bitbucket")
@@ -51,7 +53,6 @@
     ("Google Images"                                . "i")
     ("Google Maps"                                  . "googlemaps")
     ("Google Translate"                             . "gtranslate")
-    ("Google search engine"                         . "google")
     ("Hoogle haskell search engine"                 . "hoogle")
     ("IETF RFC"                                     . "rfc")
     ("IMDB - internet movie data base"              . "imdb")
