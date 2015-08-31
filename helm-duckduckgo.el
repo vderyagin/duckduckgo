@@ -29,6 +29,7 @@
 
 (require 'helm)
 (require 'seq)
+(require 'subr-x)
 
 (defconst helm-duckduckgo-bangs
   '(
@@ -80,8 +81,7 @@
 (defvar helm-duckduckgo-queries nil)
 
 (defun helm-duckduckgo-read-queries ()
-  (cl-loop with queries
-           with end-of-input = nil
+  (cl-loop with end-of-input = nil
            with default-value = (and (region-active-p)
                                      (buffer-substring-no-properties
                                       (region-beginning) (region-end)))
@@ -102,11 +102,10 @@
                                 (if default-value
                                     (format " (default \"%s\")" default-value)
                                   ""))
-           until end-of-input
-           collect (let ((minibuffer-local-map map))
-                     (read-string prompt nil nil default-value))
-           into queries
-           finally return (delete "" queries)))
+           for query = (let ((minibuffer-local-map map))
+                         (read-string prompt nil nil default-value))
+           unless (string-empty-p query) collect query
+           until end-of-input))
 
 (defun helm-duckduckgo-search-url (bang query)
   (concat "http://duckduckgo.com/?q=" (url-hexify-string (format "!%s %s" bang query))))
