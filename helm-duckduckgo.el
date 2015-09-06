@@ -72,6 +72,7 @@
     ("Twitter"                                      . "twitter")
     ("Urban Dictionary"                             . "urbandictionary")
     ("Wayback Machine"                              . "wayback")
+    ("Weather Underground"                          . "wunderground")
     ("Wikipedia (RU)"                               . "wru")
     ("Wikipedia"                                    . "w")
     ("Wiktionary (dictionary)"                      . "wiktionary")
