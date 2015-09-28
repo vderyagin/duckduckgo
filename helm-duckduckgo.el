@@ -78,6 +78,7 @@
     ("Wiktionary (dictionary)"                      . "wiktionary")
     ("WolframAlpha (search engine)"                 . "wolframalpha")
     ("YouTube (video hosting)"                      . "youtube")
+    ("ruby-doc.org"                                 . "rubydoc")
     ))
 
 (defvar helm-duckduckgo-queries nil)
