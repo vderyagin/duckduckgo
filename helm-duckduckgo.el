@@ -102,7 +102,7 @@
                             (setq default-value nil)
                             (call-interactively #'exit-minibuffer)))
                         map)
-           for prompt = (format "Search query%s: "
+           for prompt = (format "Search query%s (press RET to proceed, C-RET to enter another query): "
                                 (if default-value
                                     (format " (default \"%s\")" default-value)
                                   ""))
@@ -138,8 +138,11 @@
     (helm :prompt "Search with: "
           :sources '((name . "Search Options")
                      (candidates . helm-duckduckgo-bangs)
-                     (action . (("Run Search" . helm-duckduckgo-do-search)
-                                ("Copy to Kill-ring" . helm-duckduckgo-copy-to-kill-ring))))
+                     (persistent-action)
+                     (persistent-help)
+                     (action . (("Run search" . helm-duckduckgo-do-search)
+                                ("Copy to kill-ring" . helm-duckduckgo-copy-to-kill-ring)))
+                     (mode-line . ("search engine(s)" "RET:Perform search f2:Copy URLs to kill-ring")))
           :buffer "*helm duckduckgo*")))
 
 (provide 'helm-duckduckgo)
