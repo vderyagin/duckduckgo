@@ -108,8 +108,9 @@
                                   ""))
            for query = (let ((minibuffer-local-map map))
                          (read-string prompt nil nil default-value))
-           unless (string-empty-p query) collect query
-           until end-of-input))
+           unless (string-empty-p query) collect query into queries
+           until (and end-of-input queries)
+           finally return queries))
 
 (defun helm-duckduckgo-search-url (bang query)
   (concat "http://duckduckgo.com/?q=" (url-hexify-string (format "!%s %s" bang query))))
