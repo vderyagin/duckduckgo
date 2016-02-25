@@ -27,6 +27,7 @@
 
 ;;; Code:
 
+(require 'dash-functional)
 (require 'helm)
 (require 'seq)
 (require 'subr-x)
