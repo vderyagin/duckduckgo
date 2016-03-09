@@ -68,6 +68,7 @@
     ("SoundCloud music"                             . "!soundcloud")
     ("StackOverflow"                                . "!stackoverflow")
     ("StackOverflow"                                . "!stackoverflow")
+    ("TVDB.com - An open database for TV fans"      . "!tvdb")
     ("The Pirate Bay torrent tracker"               . "!thepiratebay")
     ("Tumblr"                                       . "!tumblr")
     ("Twitter"                                      . "!twitter")
