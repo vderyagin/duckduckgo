@@ -163,7 +163,7 @@
   (interactive)
   (let ((helm-duckduckgo-queries (helm-duckduckgo-read-queries))
         (mode-line '("search engine(s)"
-                     "RET:Perform search f2:Copy URLs to kill-ring"))
+                     "RET:Run search f2:Run search in alternate browser f3:Copy URLs to kill-ring"))
         (actions '(("Run search in default browser"
                     . helm-duckduckgo-do-search)
                    ("Run search in alternate browser"
