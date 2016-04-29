@@ -84,6 +84,8 @@
     ("ruby-doc.org"                                 . "!rubydoc")
     ))
 
+(defvar helm-duckduckgo-alternate-browser-function #'eww-browse-url)
+
 (defvar helm-duckduckgo-queries nil)
 
 (defun helm-duckduckgo-read-queries ()
@@ -128,10 +130,14 @@
                          queries))
               bangs))
 
-(defun helm-duckduckgo-do-search (_)
+(defun helm-duckduckgo-do-search (&rest _)
   (seq-each #'browse-url
             (helm-duckduckgo-urls (helm-marked-candidates)
                                   helm-duckduckgo-queries)))
+
+(defun helm-duckduckgo-do-search-alternate-browser (_)
+  (let ((browse-url-browser-function helm-duckduckgo-alternate-browser-function))
+    (helm-duckduckgo-do-search)))
 
 (defun helm-duckduckgo-copy-to-kill-ring (_)
   (kill-new
@@ -145,8 +151,10 @@
   (let ((helm-duckduckgo-queries (helm-duckduckgo-read-queries))
         (mode-line '("search engine(s)"
                      "RET:Perform search f2:Copy URLs to kill-ring"))
-        (actions '(("Run search"
+        (actions '(("Run search in default browser"
                     . helm-duckduckgo-do-search)
+                   ("Run search in alternate browser"
+                    . helm-duckduckgo-do-search-alternate-browser)
                    ("Copy search URL(s) to kill-ring"
                     . helm-duckduckgo-copy-to-kill-ring))))
     (helm :prompt "Search with: "
