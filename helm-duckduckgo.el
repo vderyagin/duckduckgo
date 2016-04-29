@@ -148,11 +148,11 @@
             (helm-duckduckgo-urls (helm-marked-candidates)
                                   helm-duckduckgo-queries)))
 
-(defun helm-duckduckgo-do-search-alternate-browser (_)
+(defun helm-duckduckgo-do-search-alternate-browser (&rest _)
   (let ((browse-url-browser-function helm-duckduckgo-alternate-browser-function))
     (helm-duckduckgo-do-search)))
 
-(defun helm-duckduckgo-copy-to-kill-ring (_)
+(defun helm-duckduckgo-copy-to-kill-ring (&rest _)
   (kill-new
    (string-join (helm-duckduckgo-urls (helm-marked-candidates)
                                       helm-duckduckgo-queries)
