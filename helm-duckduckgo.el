@@ -32,7 +32,18 @@
 (require 'seq)
 (require 'subr-x)
 
-(defconst helm-duckduckgo-bangs
+(defgroup helm-duckduckgo nil
+  "Helm interface for DuckDuckGo web search engine"
+  :prefix "helm-duckduckgo-"
+  :group 'helm
+  :group 'tools)
+
+(defcustom helm-duckduckgo-alternate-browser-function #'eww-browse-url
+  "Alternate value for `browse-url-browser-function'"
+  :group 'helm-duckduckgo
+  :type 'function)
+
+(defcustom helm-duckduckgo-bangs
   '(
     ("Google search engine"                         . "!google")
 
@@ -82,9 +93,11 @@
     ("WolframAlpha (search engine)"                 . "!wolframalpha")
     ("YouTube (video hosting)"                      . "!youtube")
     ("ruby-doc.org"                                 . "!rubydoc")
-    ))
-
-(defvar helm-duckduckgo-alternate-browser-function #'eww-browse-url)
+    )
+  "Search engines to choose from"
+  :group 'helm-duckduckgo
+  :type '(repeat (cons (string :tag "Name/description")
+                       (string :tag "Bang"))))
 
 (defvar helm-duckduckgo-queries nil)
 
