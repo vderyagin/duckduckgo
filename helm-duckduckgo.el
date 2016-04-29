@@ -5,7 +5,7 @@
 ;; Author: Victor Deryagin <vderyagin@gmail.com>
 ;; Maintainer: Victor Deryagin <vderyagin@gmail.com>
 ;; Created: 25 Feb 2015
-;; Version: 0.1
+;; Version: 0.2.0
 ;; Package-Requires: ((helm) (dash-functional))
 
 ;; This program is free software; you can redistribute it and/or
