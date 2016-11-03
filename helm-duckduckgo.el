@@ -6,7 +6,7 @@
 ;; Maintainer: Victor Deryagin <vderyagin@gmail.com>
 ;; Created: 25 Feb 2015
 ;; Version: 0.2.0
-;; Package-Requires: ((helm) (dash-functional))
+;; Package-Requires: ((helm))
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -27,7 +27,6 @@
 
 ;;; Code:
 
-(require 'dash-functional)
 (require 'helm)
 (require 'seq)
 (require 'subr-x)
@@ -140,7 +139,7 @@
 
 (defun helm-duckduckgo-urls (bangs queries)
   (seq-mapcat (lambda (bang)
-                (seq-map (-partial #'helm-duckduckgo-search-url bang)
+                (seq-map (lambda (query) (helm-duckduckgo-search-url bang query))
                          queries))
               bangs))
 
