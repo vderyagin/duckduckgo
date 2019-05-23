@@ -45,6 +45,7 @@
 (defcustom helm-duckduckgo-bangs
   '(
     ("Google search engine"                         . "!google")
+    ("Google Feeling Lucky"                         . "!lucky")
 
     ("Aliexpress store"                             . "!aliexpress")
     ("Amazon.com store"                             . "!amazon")
