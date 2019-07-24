@@ -172,10 +172,9 @@
                                (cons 'candidates helm-duckduckgo-bangs)
                                (cons 'action actions)
                                (cons 'mode-line mode-line))
-                         (list (cons 'name  "Search different website (use website URL or !bang)")
-                               (list 'dummy)
-                               (cons 'action actions)
-                               (cons 'mode-line mode-line))))))
+                         (helm-build-dummy-source "Search different website (use website URL or !bang)"
+                           :action nil
+                           :mode-line "")))))
 
 (provide 'helm-duckduckgo)
 
