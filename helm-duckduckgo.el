@@ -173,8 +173,8 @@
                                (cons 'action actions)
                                (cons 'mode-line mode-line))
                          (helm-build-dummy-source "Search different website (use website URL or !bang)"
-                           :action nil
-                           :mode-line "")))))
+                           :action actions
+                           :mode-line mode-line)))))
 
 (provide 'helm-duckduckgo)
 
