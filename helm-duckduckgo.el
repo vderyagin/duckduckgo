@@ -1,6 +1,6 @@
 ;;; helm-duckduckgo.el --- A Helm interface for DuckDuckGo web search engine -*- lexical-binding: t -*-
 
-;; Copyright (C) 2015-2019 Victor Deryagin
+;; Copyright (C) 2015-2021 Victor Deryagin
 
 ;; Author: Victor Deryagin <vderyagin@gmail.com>
 ;; Maintainer: Victor Deryagin <vderyagin@gmail.com>
