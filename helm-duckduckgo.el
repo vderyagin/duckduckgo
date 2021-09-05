@@ -65,7 +65,7 @@
     ("GitLab.com git hosting provider"              . "!gitlab")
     ("GoDoc search"                                 . "!godoc")
     ("GoodReads reading/book recomendation website" . "!goodreads")
-    ("Google Images"                                . "!googleimages")
+    ("Google Images"                                . "!gi")
     ("Google Maps"                                  . "!googlemaps")
     ("Google Translate"                             . "!gtranslate")
     ("Hoogle haskell search engine"                 . "!hoogle")
