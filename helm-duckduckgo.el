@@ -1,12 +1,12 @@
 ;;; helm-duckduckgo.el --- A Helm interface for DuckDuckGo web search engine -*- lexical-binding: t -*-
 
-;; Copyright (C) 2015-2021 Victor Deryagin
+;; Copyright (C) 2015-2022 Victor Deryagin
 
 ;; Author: Victor Deryagin <vderyagin@gmail.com>
 ;; Maintainer: Victor Deryagin <vderyagin@gmail.com>
 ;; Created: 25 Feb 2015
-;; Version: 0.2.5
-;; Package-Requires: ((helm))
+;; Version: 0.3.0
+;; Package-Requires: ((consult))
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -25,9 +25,11 @@
 
 ;;; Commentary:
 
+;; https://duckduckgo.com/bang
+
 ;;; Code:
 
-(require 'helm)
+(require 'consult)
 (require 'seq)
 (require 'subr-x)
 
@@ -95,8 +97,6 @@
   :type '(repeat (cons (string :tag "Name/description")
                        (string :tag "Bang"))))
 
-(defvar helm-duckduckgo-queries nil)
-
 (defun helm-duckduckgo-read-queries ()
   (cl-loop with end-of-input = nil
            with default-value = (and (region-active-p)
@@ -105,15 +105,15 @@
            with map = (let ((map (make-sparse-keymap)))
                         (set-keymap-parent map minibuffer-local-map)
                         (define-key map (kbd "<return>")
-                          (lambda ()
-                            (interactive)
-                            (setq end-of-input t)
-                            (call-interactively #'exit-minibuffer)))
+                                    (lambda ()
+                                      (interactive)
+                                      (setq end-of-input t)
+                                      (call-interactively #'exit-minibuffer)))
                         (define-key map (kbd "C-<return>")
-                          (lambda ()
-                            (interactive)
-                            (setq default-value nil)
-                            (call-interactively #'exit-minibuffer)))
+                                    (lambda ()
+                                      (interactive)
+                                      (setq default-value nil)
+                                      (call-interactively #'exit-minibuffer)))
                         map)
            for prompt = (format "Search query%s (%s): "
                                 (if default-value
@@ -139,42 +139,65 @@
                          queries))
               bangs))
 
-(defun helm-duckduckgo-do-search (&rest _)
+(defun helm-duckduckgo-do-search (candidates queries)
   (seq-each #'browse-url
-            (helm-duckduckgo-urls (helm-marked-candidates)
-                                  helm-duckduckgo-queries)))
+            (helm-duckduckgo-urls candidates queries)))
 
-(defun helm-duckduckgo-do-search-alternate-browser (&rest _)
+(defun helm-duckduckgo-do-search-alternate-browser (candidates queries)
   (let ((browse-url-browser-function helm-duckduckgo-alternate-browser-function))
-    (helm-duckduckgo-do-search)))
+    (seq-each #'browse-url
+              (helm-duckduckgo-urls candidates queries))))
 
-(defun helm-duckduckgo-copy-to-kill-ring (&rest _)
+(defun helm-duckduckgo-copy-to-kill-ring (candidates queries)
   (kill-new
-   (string-join (helm-duckduckgo-urls (helm-marked-candidates)
-                                      helm-duckduckgo-queries)
+   (string-join (helm-duckduckgo-urls candidates queries)
                 "\n")))
+
+(defun helm-duckduckgo-annotate-candidate (candidate)
+  (concat
+   (propertize " " 'display '(space :align-to center))
+   (map-elt helm-duckduckgo-bangs candidate)))
 
 ;;;###autoload
 (defun helm-duckduckgo ()
   (interactive)
-  (let ((helm-duckduckgo-queries (helm-duckduckgo-read-queries))
-        (mode-line '("search engine(s)"
-                     "RET:Run search f2:Run search in alternate browser f3:Copy URLs to kill-ring"))
-        (actions '(("Run search in default browser"
-                    . helm-duckduckgo-do-search)
-                   ("Run search in alternate browser"
-                    . helm-duckduckgo-do-search-alternate-browser)
-                   ("Copy search URL(s) to kill-ring"
-                    . helm-duckduckgo-copy-to-kill-ring))))
-    (helm :prompt "Search with: "
-          :buffer "*helm duckduckgo*"
-          :sources (list (list (cons 'name  "Search Options")
-                               (cons 'candidates helm-duckduckgo-bangs)
-                               (cons 'action actions)
-                               (cons 'mode-line mode-line))
-                         (helm-build-dummy-source "Search different website (use website URL or !bang)"
-                           :action actions
-                           :mode-line mode-line)))))
+  (let* ((queries (helm-duckduckgo-read-queries))
+         ;; (action)
+         (selected-candidate
+          (consult--read
+           helm-duckduckgo-bangs
+           :require-match nil
+           :annotate #'helm-duckduckgo-annotate-candidate
+           ;; :keymap (let ((map (make-sparse-keymap)))
+           ;;              (set-keymap-parent map minibuffer-local-map)
+           ;;              (define-key map (kbd "<return>")
+           ;;                          (lambda ()
+           ;;                            (interactive)
+           ;;                            (setq action 'browse)
+           ;;                            (call-interactively #'exit-minibuffer)))
+           ;;              (define-key map (kbd "C-<return>")
+           ;;                          (lambda ()
+           ;;                            (interactive)
+           ;;                            (setq action 'browse-alternative)
+           ;;                            (call-interactively #'exit-minibuffer)))
+           ;;              (define-key map (kbd "C-M-<return>")
+           ;;                          (lambda ()
+           ;;                            (interactive)
+           ;;                            (setq action 'copy-urls)
+           ;;                            (call-interactively #'exit-minibuffer)))
+           ;;              map)
+           ))
+         (bang (or (map-elt helm-duckduckgo-bangs selected-candidate)
+                   selected-candidate)))
+    (helm-duckduckgo-do-search (list bang) queries)
+    ;; (pcase action
+    ;;   (`browse
+    ;;    (helm-duckduckgo-do-search (list bang) queries))
+    ;;   (`browse-alternative
+    ;;    (helm-duckduckgo-do-search-alternative-browser (list bang) queries))
+    ;;   (`copy-urls
+    ;;    (helm-duckduckgo-copy-to-kill-ring (list bang) queries)))
+    ))
 
 (provide 'helm-duckduckgo)
 
