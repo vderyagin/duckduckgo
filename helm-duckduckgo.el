@@ -31,7 +31,6 @@
 
 (require 'consult)
 (require 'seq)
-(require 'subr-x)
 
 (defgroup helm-duckduckgo nil
   "Helm interface for DuckDuckGo web search engine"
@@ -159,45 +158,23 @@
    (map-elt helm-duckduckgo-bangs candidate)))
 
 ;;;###autoload
-(defun helm-duckduckgo ()
-  (interactive)
+(defun helm-duckduckgo (&optional arg)
+  (interactive "p")
   (let* ((queries (helm-duckduckgo-read-queries))
-         ;; (action)
          (selected-candidate
           (consult--read
            helm-duckduckgo-bangs
            :require-match nil
-           :annotate #'helm-duckduckgo-annotate-candidate
-           ;; :keymap (let ((map (make-sparse-keymap)))
-           ;;              (set-keymap-parent map minibuffer-local-map)
-           ;;              (define-key map (kbd "<return>")
-           ;;                          (lambda ()
-           ;;                            (interactive)
-           ;;                            (setq action 'browse)
-           ;;                            (call-interactively #'exit-minibuffer)))
-           ;;              (define-key map (kbd "C-<return>")
-           ;;                          (lambda ()
-           ;;                            (interactive)
-           ;;                            (setq action 'browse-alternative)
-           ;;                            (call-interactively #'exit-minibuffer)))
-           ;;              (define-key map (kbd "C-M-<return>")
-           ;;                          (lambda ()
-           ;;                            (interactive)
-           ;;                            (setq action 'copy-urls)
-           ;;                            (call-interactively #'exit-minibuffer)))
-           ;;              map)
-           ))
+           :annotate #'helm-duckduckgo-annotate-candidate))
          (bang (or (map-elt helm-duckduckgo-bangs selected-candidate)
                    selected-candidate)))
-    (helm-duckduckgo-do-search (list bang) queries)
-    ;; (pcase action
-    ;;   (`browse
-    ;;    (helm-duckduckgo-do-search (list bang) queries))
-    ;;   (`browse-alternative
-    ;;    (helm-duckduckgo-do-search-alternative-browser (list bang) queries))
-    ;;   (`copy-urls
-    ;;    (helm-duckduckgo-copy-to-kill-ring (list bang) queries)))
-    ))
+    (pcase arg
+      (1
+       (helm-duckduckgo-do-search (list bang) queries))
+      (4
+       (helm-duckduckgo-do-search-alternate-browser (list bang) queries))
+      (_
+       (helm-duckduckgo-copy-to-kill-ring (list bang) queries)))))
 
 (provide 'helm-duckduckgo)
 
