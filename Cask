@@ -1,4 +1,4 @@
 (source gnu)
 (source melpa)
 
-(package-file "helm-duckduckgo.el")
+(package-file "duckduckgo.el")
