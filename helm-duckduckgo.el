@@ -1,4 +1,4 @@
-;;; helm-duckduckgo.el --- A Helm interface for DuckDuckGo web search engine -*- lexical-binding: t -*-
+;;; duckduckgo.el --- An interface for DuckDuckGo web search engine -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2015-2022 Victor Deryagin
 
@@ -32,18 +32,17 @@
 (require 'consult)
 (require 'seq)
 
-(defgroup helm-duckduckgo nil
-  "Helm interface for DuckDuckGo web search engine"
-  :prefix "helm-duckduckgo-"
-  :group 'helm
+(defgroup duckduckgo nil
+  "An interface for DuckDuckGo web search engine"
+  :prefix "duckduckgo-"
   :group 'tools)
 
-(defcustom helm-duckduckgo-alternate-browser-function #'eww-browse-url
+(defcustom duckduckgo-alternate-browser-function #'eww-browse-url
   "Alternate value for `browse-url-browser-function'"
-  :group 'helm-duckduckgo
+  :group 'duckduckgo
   :type 'function)
 
-(defcustom helm-duckduckgo-bangs
+(defcustom duckduckgo-bangs
   '(
     ("google.com"              . "!google")
     ("aliexpress.com"          . "!aliexpress")
@@ -80,11 +79,11 @@
     ("YouTube"                 . "!youtube")
     )
   "Search engines to choose from"
-  :group 'helm-duckduckgo
+  :group 'duckduckgo
   :type '(repeat (cons (string :tag "Name/description")
                        (string :tag "Bang"))))
 
-(defun helm-duckduckgo-read-queries ()
+(defun duckduckgo--read-queries ()
   (cl-loop with end-of-input = nil
            with default-value = (and (region-active-p)
                                      (buffer-substring-no-properties
@@ -113,57 +112,57 @@
            until (and end-of-input queries)
            finally return queries))
 
-(defun helm-duckduckgo-search-url (website query)
+(defun duckduckgo--search-url (website query)
   (let ((query-template (if (string-prefix-p "!" website)
                             "%s %s"
                           "!safeoff site:%s %s")))
     (concat "http://duckduckgo.com/?q="
             (url-hexify-string (format query-template website query)))))
 
-(defun helm-duckduckgo-urls (bangs queries)
+(defun duckduckgo--urls (bangs queries)
   (seq-mapcat (lambda (bang)
-                (seq-map (lambda (query) (helm-duckduckgo-search-url bang query))
+                (seq-map (lambda (query) (duckduckgo--search-url bang query))
                          queries))
               bangs))
 
-(defun helm-duckduckgo-do-search (candidates queries)
+(defun duckduckgo--do-search (candidates queries)
   (seq-each #'browse-url
-            (helm-duckduckgo-urls candidates queries)))
+            (duckduckgo--urls candidates queries)))
 
-(defun helm-duckduckgo-do-search-alternate-browser (candidates queries)
-  (let ((browse-url-browser-function helm-duckduckgo-alternate-browser-function))
+(defun duckduckgo--do-search-alternate-browser (candidates queries)
+  (let ((browse-url-browser-function duckduckgo-alternate-browser-function))
     (seq-each #'browse-url
-              (helm-duckduckgo-urls candidates queries))))
+              (duckduckgo--urls candidates queries))))
 
-(defun helm-duckduckgo-copy-to-kill-ring (candidates queries)
+(defun duckduckgo--copy-to-kill-ring (candidates queries)
   (kill-new
-   (string-join (helm-duckduckgo-urls candidates queries)
+   (string-join (duckduckgo--urls candidates queries)
                 "\n")))
 
-(defun helm-duckduckgo-annotate-candidate (candidate)
+(defun duckduckgo--annotate-candidate (candidate)
   (concat
    (propertize " " 'display '(space :align-to center))
-   (map-elt helm-duckduckgo-bangs candidate)))
+   (map-elt duckduckgo-bangs candidate)))
 
 ;;;###autoload
-(defun helm-duckduckgo (&optional arg)
+(defun duckduckgo (&optional arg)
   (interactive "p")
-  (let* ((queries (helm-duckduckgo-read-queries))
+  (let* ((queries (duckduckgo--read-queries))
          (selected-candidate
           (consult--read
-           helm-duckduckgo-bangs
+           duckduckgo-bangs
            :require-match nil
-           :annotate #'helm-duckduckgo-annotate-candidate))
-         (bang (or (map-elt helm-duckduckgo-bangs selected-candidate)
+           :annotate #'duckduckgo--annotate-candidate))
+         (bang (or (map-elt duckduckgo-bangs selected-candidate)
                    selected-candidate)))
     (pcase arg
       (1
-       (helm-duckduckgo-do-search (list bang) queries))
+       (duckduckgo--do-search (list bang) queries))
       (4
-       (helm-duckduckgo-do-search-alternate-browser (list bang) queries))
+       (duckduckgo--do-search-alternate-browser (list bang) queries))
       (_
-       (helm-duckduckgo-copy-to-kill-ring (list bang) queries)))))
+       (duckduckgo--copy-to-kill-ring (list bang) queries)))))
 
-(provide 'helm-duckduckgo)
+(provide 'duckduckgo)
 
-;;; helm-duckduckgo.el ends here
+;;; duckduckgo.el ends here
