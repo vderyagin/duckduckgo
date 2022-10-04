@@ -116,7 +116,7 @@
   (let ((query-template (if (string-prefix-p "!" website)
                             "%s %s"
                           "!safeoff site:%s %s")))
-    (concat "http://duckduckgo.com/?q="
+    (concat "https://duckduckgo.com/?q="
             (url-hexify-string (format query-template website query)))))
 
 (defun duckduckgo--urls (bangs queries)
