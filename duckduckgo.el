@@ -31,6 +31,7 @@
 
 (require 'consult)
 (require 'seq)
+(require 'map)
 
 (defgroup duckduckgo nil
   "An interface for DuckDuckGo web search engine"
