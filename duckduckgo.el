@@ -150,7 +150,8 @@
 ;;;###autoload
 (defun duckduckgo (&optional arg)
   (interactive "p")
-  (let* ((queries (or duckduckgo--queue
+  (let* ((queries (or (and (not (region-active-p))
+                           duckduckgo--queue)
                       (duckduckgo--read-queries)))
          (selected-candidate
           (consult--read
@@ -178,7 +179,7 @@
          (prog1 (buffer-substring-no-properties
                  (region-beginning) (region-end))
            (deactivate-mark)))
-    (read-string "Query to add to queue:"))))
+    (read-string "Query to add to queue: "))))
 
 (defun duckduckgo-clear-queue ()
   (interactive)
