@@ -84,6 +84,8 @@
   :type '(repeat (cons (string :tag "Name/description")
                        (string :tag "Bang"))))
 
+(defvar duckduckgo--queue nil)
+
 (defun duckduckgo--read-queries ()
   (cl-loop with end-of-input = nil
            with default-value = (and (region-active-p)
@@ -148,7 +150,8 @@
 ;;;###autoload
 (defun duckduckgo (&optional arg)
   (interactive "p")
-  (let* ((queries (duckduckgo--read-queries))
+  (let* ((queries (or duckduckgo--queue
+                      (duckduckgo--read-queries)))
          (selected-candidate
           (consult--read
            duckduckgo-bangs
@@ -156,6 +159,7 @@
            :annotate #'duckduckgo--annotate-candidate))
          (bang (or (map-elt duckduckgo-bangs selected-candidate)
                    selected-candidate)))
+    (duckduckgo-clear-queue)
     (pcase arg
       (1
        (duckduckgo--do-search (list bang) queries))
@@ -163,6 +167,22 @@
        (duckduckgo--do-search-alternate-browser (list bang) queries))
       (_
        (duckduckgo--copy-to-kill-ring (list bang) queries)))))
+
+;;;###autoload
+(defun duckduckgo-add-to-queue ()
+  (interactive)
+  (add-to-list
+   'duckduckgo--queue
+   (or
+    (and (region-active-p)
+         (prog1 (buffer-substring-no-properties
+                 (region-beginning) (region-end))
+           (deactivate-mark)))
+    (read-string "Query to add to queue:"))))
+
+(defun duckduckgo-clear-queue ()
+  (interactive)
+  (setq duckduckgo--queue nil))
 
 (provide 'duckduckgo)
 
