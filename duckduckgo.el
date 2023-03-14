@@ -43,6 +43,11 @@
   :group 'duckduckgo
   :type 'function)
 
+(defcustom duckduckgo-queue-buffer-name "*duckduckgo-queue*"
+  "Name for buffer used for editing the queue"
+  :group 'duckduckgo
+  :type 'string)
+
 (defcustom duckduckgo-bangs
   '(
     ("google.com"              . "!google")
@@ -186,7 +191,7 @@
 ;;;###autoload
 (defun duckduckgo-queue-edit ()
   (interactive)
-  (let ((buf (get-buffer-create "*duckduckgo-queue*")))
+  (let ((buf (get-buffer-create duckduckgo-queue-buffer-name)))
     (with-current-buffer buf
       (keymap-local-set "C-c C-c" #'duckduckgo-queue-edit-apply)
       (keymap-local-set "C-c C-k" #'duckduckgo-queue-edit-discard)
@@ -199,7 +204,7 @@
 
 (defun duckduckgo-queue-edit-apply ()
   (interactive)
-  (unless (string= (buffer-name) "*duckduckgo-queue*")
+  (unless (string= (buffer-name) duckduckgo-queue-buffer-name)
     (user-error "Not supposed to be invoked outside of ddg queue buffer"))
   (setq duckduckgo--queue
         (thread-first
@@ -209,13 +214,13 @@
 
 (defun duckduckgo-queue-edit-discard ()
   (interactive)
-  (unless (string= (buffer-name) "*duckduckgo-queue*")
+  (unless (string= (buffer-name) duckduckgo-queue-buffer-name)
     (user-error "Not supposed to be invoked outside of ddg queue buffer"))
   (kill-buffer))
 
 (defun duckduckgo-queue-edit-clear ()
   (interactive)
-  (unless (string= (buffer-name) "*duckduckgo-queue*")
+  (unless (string= (buffer-name) duckduckgo-queue-buffer-name)
     (user-error "Not supposed to be invoked outside of ddg queue buffer"))
   (duckduckgo-clear-queue)
   (kill-buffer))
