@@ -172,14 +172,17 @@
 ;;;###autoload
 (defun duckduckgo-add-to-queue ()
   (interactive)
-  (add-to-list
-   'duckduckgo--queue
-   (or
-    (and (region-active-p)
-         (prog1 (buffer-substring-no-properties
-                 (region-beginning) (region-end))
-           (deactivate-mark)))
-    (read-string "Query to add to queue: "))))
+  (let ((region (and (region-active-p)
+                     (thread-last
+                       (buffer-substring-no-properties
+                        (region-beginning) (region-end))
+                       (replace-regexp-in-string "\s*\n\s*" " ")
+                       string-trim))))
+    (add-to-list 'duckduckgo--queue
+                 (if (and region (not (string-empty-p region)))
+                     region
+                   (read-string "Query to add to queue: ")))
+    (deactivate-mark)))
 
 (defun duckduckgo-clear-queue ()
   (interactive)
