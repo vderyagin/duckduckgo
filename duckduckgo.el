@@ -184,6 +184,34 @@
                    (read-string "Query to add to queue: ")))
     (deactivate-mark)))
 
+(defun duckduckgo-queue-edit ()
+  (interactive)
+  (let ((buf (get-buffer-create "*duckduckgo-queue*")))
+    (with-current-buffer buf
+      (keymap-local-set "C-c C-c" #'duckduckgo-queue-apply-edits)
+      (keymap-local-set "C-c C-k" #'duckduckgo-queue-discard-edits)
+      (erase-buffer)
+      (save-excursion
+        (insert (string-join duckduckgo--queue "\n"))))
+    (pop-to-buffer buf)
+    (message "C-c C-c to save, C-c C-k to discard")))
+
+(defun duckduckgo-queue-apply-edits ()
+  (interactive)
+  (unless (string= (buffer-name) "*duckduckgo-queue*")
+    (user-error "Not supposed to be invoked outside of ddg queue buffer"))
+  (setq duckduckgo--queue
+        (thread-first
+          (buffer-substring-no-properties (point-min) (point-max))
+          (split-string "\n" t "\s+")))
+  (kill-buffer))
+
+(defun duckduckgo-queue-discard-edits ()
+  (interactive)
+  (unless (string= (buffer-name) "*duckduckgo-queue*")
+    (user-error "Not supposed to be invoked outside of ddg queue buffer"))
+  (kill-buffer))
+
 (defun duckduckgo-clear-queue ()
   (interactive)
   (setq duckduckgo--queue nil))
