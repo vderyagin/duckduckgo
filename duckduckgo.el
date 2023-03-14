@@ -188,15 +188,16 @@
   (interactive)
   (let ((buf (get-buffer-create "*duckduckgo-queue*")))
     (with-current-buffer buf
-      (keymap-local-set "C-c C-c" #'duckduckgo-queue-apply-edits)
-      (keymap-local-set "C-c C-k" #'duckduckgo-queue-discard-edits)
+      (keymap-local-set "C-c C-c" #'duckduckgo-queue-edit-apply)
+      (keymap-local-set "C-c C-k" #'duckduckgo-queue-edit-discard)
+      (keymap-local-set "C-c C-x" #'duckduckgo-queue-edit-clear)
       (erase-buffer)
       (save-excursion
         (insert (string-join duckduckgo--queue "\n"))))
     (pop-to-buffer buf)
-    (message "C-c C-c to save, C-c C-k to discard")))
+    (message "C-c C-c to save, C-c C-k to discard, C-c C-x to purge the queue")))
 
-(defun duckduckgo-queue-apply-edits ()
+(defun duckduckgo-queue-edit-apply ()
   (interactive)
   (unless (string= (buffer-name) "*duckduckgo-queue*")
     (user-error "Not supposed to be invoked outside of ddg queue buffer"))
@@ -206,10 +207,17 @@
           (split-string "\n" t "\s+")))
   (kill-buffer))
 
-(defun duckduckgo-queue-discard-edits ()
+(defun duckduckgo-queue-edit-discard ()
   (interactive)
   (unless (string= (buffer-name) "*duckduckgo-queue*")
     (user-error "Not supposed to be invoked outside of ddg queue buffer"))
+  (kill-buffer))
+
+(defun duckduckgo-queue-edit-clear ()
+  (interactive)
+  (unless (string= (buffer-name) "*duckduckgo-queue*")
+    (user-error "Not supposed to be invoked outside of ddg queue buffer"))
+  (duckduckgo-clear-queue)
   (kill-buffer))
 
 (defun duckduckgo-clear-queue ()
