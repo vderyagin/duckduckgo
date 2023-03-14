@@ -184,6 +184,7 @@
                    (read-string "Query to add to queue: ")))
     (deactivate-mark)))
 
+;;;###autoload
 (defun duckduckgo-queue-edit ()
   (interactive)
   (let ((buf (get-buffer-create "*duckduckgo-queue*")))
