@@ -172,7 +172,7 @@
 ;;;###autoload
 (defun duckduckgo-add-to-queue ()
   (interactive)
-  (let ((region (and (region-active-p)
+  (let ((region (and (use-region-p)
                      (thread-last
                        (buffer-substring-no-properties
                         (region-beginning) (region-end))
