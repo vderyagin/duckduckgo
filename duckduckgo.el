@@ -161,13 +161,12 @@
          (bang (or (map-elt duckduckgo-bangs selected-candidate)
                    selected-candidate)))
     (duckduckgo-clear-queue)
-    (pcase arg
-      (1
-       (duckduckgo--do-search (list bang) queries))
-      (4
-       (duckduckgo--do-search-alternate-browser (list bang) queries))
-      (_
-       (duckduckgo--copy-to-kill-ring (list bang) queries)))))
+    (funcall
+     (pcase arg
+       (1 #'duckduckgo--do-search)
+       (4 #'duckduckgo--do-search-alternate-browser)
+       (_ #'duckduckgo--copy-to-kill-ring))
+     (list bang) queries)))
 
 ;;;###autoload
 (defun duckduckgo-add-to-queue ()
