@@ -200,7 +200,10 @@
       (save-excursion
         (insert (string-join duckduckgo--queue "\n"))))
     (pop-to-buffer buf)
-    (message "C-c C-c to save, C-c C-k to discard, C-c C-x to purge the queue")))
+    (message "%s to save, %s to discard, %s to purge the queue"
+             (key-description (where-is-internal 'duckduckgo-queue-edit-apply nil t))
+             (key-description (where-is-internal 'duckduckgo-queue-edit-discard nil t))
+             (key-description (where-is-internal 'duckduckgo-queue-edit-clear nil t)))))
 
 (defun duckduckgo-queue-edit-apply ()
   (interactive)
