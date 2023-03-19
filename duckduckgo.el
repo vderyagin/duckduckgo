@@ -177,16 +177,20 @@
 (defun duckduckgo-add-to-queue ()
   (interactive)
   (let ((region (and (use-region-p)
-                     (thread-last
-                       (buffer-substring-no-properties
-                        (region-beginning) (region-end))
-                       (replace-regexp-in-string "\s*\n\s*" " ")
-                       string-trim))))
-    (add-to-list 'duckduckgo--queue
-                 (if (and region (not (string-empty-p region)))
-                     region
-                   (read-string "Query to add to queue: ")))
+                     (buffer-substring-no-properties
+                      (region-beginning) (region-end)))))
+    (or
+     (and region
+          (duckduckgo--add-string-to-queue region))
+     (duckduckgo--add-string-to-queue (read-string "Query to add to queue: ")))
     (deactivate-mark)))
+
+(defun duckduckgo--add-string-to-queue (str)
+  "Add STR to queue, returns `nil' if string was not added, non-`nil' otherwise."
+  (when-let* ((str)
+              (cleaned-input (string-trim (replace-regexp-in-string "\s*\n\s*" " " str)))
+              ((not (string-empty-p cleaned-input))))
+    (add-to-list 'duckduckgo--queue cleaned-input)))
 
 ;;;###autoload
 (defun duckduckgo-queue-edit ()
@@ -209,10 +213,12 @@
   (interactive)
   (unless (string= (buffer-name) duckduckgo-queue-buffer-name)
     (user-error "Not supposed to be invoked outside of ddg queue buffer"))
-  (setq duckduckgo--queue
-        (thread-first
-          (buffer-substring-no-properties (point-min) (point-max))
-          (split-string "\n" t "\s+")))
+  (duckduckgo-clear-queue)
+  (seq-each #'duckduckgo--add-string-to-queue
+            (thread-first
+              (buffer-substring-no-properties (point-min) (point-max))
+              (split-string "\n" t "\s+")
+              seq-reverse))
   (kill-buffer))
 
 (defun duckduckgo-queue-edit-discard ()
