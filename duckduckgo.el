@@ -33,6 +33,9 @@
 (require 'seq)
 (require 'map)
 
+(eval-when-compile
+  (require 'subr-x))
+
 (defgroup duckduckgo nil
   "An interface for DuckDuckGo web search engine"
   :prefix "duckduckgo-"
