@@ -93,6 +93,7 @@
                        (string :tag "Bang"))))
 
 (defvar duckduckgo--queue nil)
+(defvar duckduckgo--previous-search-terms nil)
 
 (defun duckduckgo--read-queries ()
   (cl-loop with end-of-input = nil
@@ -169,6 +170,26 @@
          (bang (or (map-elt duckduckgo-bangs selected-candidate)
                    selected-candidate)))
     (duckduckgo-clear-queue)
+    (setq duckduckgo--previous-search-terms queries)
+    (funcall
+     (pcase arg
+       (1 #'duckduckgo--do-search)
+       (4 #'duckduckgo--do-search-alternate-browser)
+       (_ #'duckduckgo--copy-to-kill-ring))
+     (list bang) queries)))
+
+(defun duckduckgo-again (&optional arg)
+  "Run search again on the same terms, can be run multiple times."
+  (interactive "p")
+  (let* ((queries (or duckduckgo--previous-search-terms
+                      (user-error "No previous search")))
+         (selected-candidate
+          (consult--read
+           duckduckgo-bangs
+           :require-match nil
+           :annotate #'duckduckgo--annotate-candidate))
+         (bang (or (map-elt duckduckgo-bangs selected-candidate)
+                   selected-candidate)))
     (funcall
      (pcase arg
        (1 #'duckduckgo--do-search)
