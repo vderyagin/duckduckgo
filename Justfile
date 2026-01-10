@@ -26,7 +26,6 @@ clean: _ensure-eldev-installed
     (require 'rx) \
     (require 'seq) \
     (require 'subr-x) \
-    (require 'buttercup nil 'noerror) \
     \
     (defun format--hidden-path-p (path) \
       (string-match-p (rx string-start \".\" (+ (not \"/\"))) \
